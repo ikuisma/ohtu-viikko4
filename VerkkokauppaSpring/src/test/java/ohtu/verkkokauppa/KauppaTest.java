@@ -40,7 +40,7 @@ public class KauppaTest {
     }
 
     @Test
-    public void ostoksenPaatyttyaKahdellaTuotteellaPankinMetodiaTilisiirtoKutsutaanOikein() {
+    public void ostoksenPaatyttyaKahdellaSamallaTuotteellaPankinMetodiaTilisiirtoKutsutaanOikein() {
         when(viitegeneraattori.uusi()).thenReturn(1);
         when(varasto.saldo(1)).thenReturn(100);
         when(varasto.haeTuote(1)).thenReturn(new Tuote(1, "Maito", 3));
