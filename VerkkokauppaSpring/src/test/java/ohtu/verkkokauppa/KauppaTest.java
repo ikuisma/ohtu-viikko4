@@ -23,7 +23,7 @@ public class KauppaTest {
     }
 
     @Test
-    public void ostoksenPaaytyttyaPankinMetodiaTilisiirtoKutsutaan() {
+    public void ostoksenPaatyttyaPankinMetodiaTilisiirtoKutsutaan() {
         when(viitegeneraattori.uusi()).thenReturn(1);
 
         when(varasto.saldo(1)).thenReturn(100);
@@ -37,6 +37,18 @@ public class KauppaTest {
 
         // sitten suoritetaan varmistus, että pankin metodia tilisiirto on kutsuttu
         verify(pankki).tilisiirto("pekka", 1, "12345", "33333-44455", 3);
+    }
+
+    @Test
+    public void ostoksenPaatyttyaKahdellaTuotteellaPankinMetodiaTilisiirtoKutsutaanOikein() {
+        when(viitegeneraattori.uusi()).thenReturn(1);
+        when(varasto.saldo(1)).thenReturn(100);
+        when(varasto.haeTuote(1)).thenReturn(new Tuote(1, "Maito", 3));
+        kauppa.aloitaAsiointi();
+        kauppa.lisaaKoriin(1);
+        kauppa.lisaaKoriin(1);
+        kauppa.tilimaksu("pekka", "12345");
+        verify(pankki).tilisiirto("pekka", 1, "12345", "33333-44455", 6);
     }
 
 }
