@@ -90,4 +90,14 @@ public class KauppaTest {
         verify(viitegeneraattori, times(2)).uusi();
     }
 
+    @Test
+    public void ostoskoristaPoistaminenOnnistuu() {
+        kauppa.aloitaAsiointi();
+        kauppa.lisaaKoriin(1);
+        kauppa.lisaaKoriin(1);
+        kauppa.poistaKorista(1);
+        kauppa.tilimaksu("pekka", "12345");
+        verify(pankki).tilisiirto("pekka", 1, "12345", "33333-44455", 3);
+    }
+
 }
