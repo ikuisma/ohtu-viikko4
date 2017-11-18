@@ -51,4 +51,19 @@ public class KauppaTest {
         verify(pankki).tilisiirto("pekka", 1, "12345", "33333-44455", 6);
     }
 
+
+    @Test
+    public void ostoksenPaatyttyaKahdellaEriTuotteellaPankinMetodiaTilisiirtoKutsutaanOikein() {
+        when(viitegeneraattori.uusi()).thenReturn(1);
+        when(varasto.saldo(1)).thenReturn(100);
+        when(varasto.saldo(2)).thenReturn(100);
+        when(varasto.haeTuote(1)).thenReturn(new Tuote(1, "Maito", 3));
+        when(varasto.haeTuote(2)).thenReturn(new Tuote(2, "Kalja", 6));
+        kauppa.aloitaAsiointi();
+        kauppa.lisaaKoriin(1);
+        kauppa.lisaaKoriin(2);
+        kauppa.tilimaksu("pekka", "12345");
+        verify(pankki).tilisiirto("pekka", 1, "12345", "33333-44455", 9);
+    }
+
 }
