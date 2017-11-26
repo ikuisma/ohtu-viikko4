@@ -1,80 +1,111 @@
 package ohtu;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TennisGame {
-    
-    private int m_score1 = 0;
-    private int m_score2 = 0;
-    private String player1Name;
-    private String player2Name;
+
+    private Player player1;
+    private Player player2;
 
     public TennisGame(String player1Name, String player2Name) {
-        this.player1Name = player1Name;
-        this.player2Name = player2Name;
+        this.player1 = new Player(player1Name);
+        this.player2 = new Player(player2Name);
     }
 
     public void wonPoint(String playerName) {
-        if (playerName == "player1")
-            m_score1 += 1;
-        else
-            m_score2 += 1;
+        getPlayer(playerName).addPoint();
+    }
+
+    public Player getPlayer(String name) {
+        return (player1.getName().equals(name)) ? player1 : player2;
     }
 
     public String getScore() {
-        String score = "";
-        int tempScore=0;
-        if (m_score1==m_score2)
-        {
-            switch (m_score1)
-            {
-                case 0:
-                        score = "Love-All";
-                    break;
-                case 1:
-                        score = "Fifteen-All";
-                    break;
-                case 2:
-                        score = "Thirty-All";
-                    break;
-                case 3:
-                        score = "Forty-All";
-                    break;
-                default:
-                        score = "Deuce";
-                    break;
-                
-            }
+        if (gameIsTied()) {
+            return tiedGameScore();
+        } else if (gameInTieBreaker()) {
+            return tieBreakerScore();
+        } else {
+            return onGoingScore();
         }
-        else if (m_score1>=4 || m_score2>=4)
-        {
-            int minusResult = m_score1-m_score2;
-            if (minusResult==1) score ="Advantage player1";
-            else if (minusResult ==-1) score ="Advantage player2";
-            else if (minusResult>=2) score = "Win for player1";
-            else score ="Win for player2";
+    }
+
+    public boolean gameInTieBreaker() {
+        return (player1.getPoints()>=4 || player2.getPoints()>=4);
+    }
+
+    public boolean gameIsTied() {
+        return (player1.getPoints() == player2.getPoints());
+    }
+
+    public String tiedGameScore() {
+        return TennisScoreNames.tiedScore(player1.getPoints());
+    }
+
+    public Player leadingPlayer() {
+        return (player1.getPoints() > player2.getPoints()) ? player1 : player2;
+    }
+
+    public String tieBreakerScore() {
+        boolean isAdvantage = (Math.abs(player1.getPoints() - player2.getPoints()) == 1);
+        String message = isAdvantage ? "Advantage " : "Win for ";
+        return message + leadingPlayer().getName();
+    }
+
+    public String onGoingScore() {
+        String playerOneScore = TennisScoreNames.getScore(player1.getPoints());
+        String playerTwoScore = TennisScoreNames.getScore(player2.getPoints());
+        return playerOneScore + "-" + playerTwoScore;
+    }
+
+}
+
+class Player {
+
+    private String name;
+    private int points;
+
+    public Player(String name) {
+        this.name = name;
+        points = 0;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void addPoint() {
+        this.points++;
+    }
+
+    public int getPoints() {
+        return this.points;
+    }
+
+}
+
+class TennisScoreNames {
+
+    private static final Map<Integer, String> scoreNames;
+    static
+    {
+        scoreNames = new HashMap<>();
+        scoreNames.put(0, "Love");
+        scoreNames.put(1, "Fifteen");
+        scoreNames.put(2, "Thirty");
+        scoreNames.put(3, "Forty");
+    }
+
+    public static String getScore(int points) {
+        return scoreNames.get(points);
+    }
+
+    public static String tiedScore(int points) {
+        if (points < 4) {
+            return scoreNames.get(points) + "-All";
+        } else {
+            return "Deuce";
         }
-        else
-        {
-            for (int i=1; i<3; i++)
-            {
-                if (i==1) tempScore = m_score1;
-                else { score+="-"; tempScore = m_score2;}
-                switch(tempScore)
-                {
-                    case 0:
-                        score+="Love";
-                        break;
-                    case 1:
-                        score+="Fifteen";
-                        break;
-                    case 2:
-                        score+="Thirty";
-                        break;
-                    case 3:
-                        score+="Forty";
-                        break;
-                }
-            }
-        }
-        return score;
     }
 }
