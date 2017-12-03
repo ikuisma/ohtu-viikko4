@@ -1,4 +1,3 @@
 # ohtu-viikko4
 
-Edited for week 5, exercise 3. 
-
+This repository contains answers to the exercises from weeks 4 and 5 of the ohjelmistotuotanto course. 
